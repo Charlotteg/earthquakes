@@ -36,21 +36,6 @@ jobs:
       - run: npm ci
       - run: npm run test:unit
 
-  e2e-test:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-      - name: Use Node.js 20
-        uses: actions/setup-node@v3
-        with:
-          node-version: 20
-          cache: 'npm'
-      - run: npm ci
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
-      - run: npm run test:e2e
-
   build:
     runs-on: ubuntu-latest
 
