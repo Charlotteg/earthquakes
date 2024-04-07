@@ -17,6 +17,7 @@ const app = createApp(App);
 const vuetify = createVuetify({
   components,
   directives,
+  // theme: 'dark', // type issue
   icons: {
     defaultSet: 'md',
     aliases,
