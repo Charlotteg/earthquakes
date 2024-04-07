@@ -15,7 +15,7 @@ describe('Earthquake store', () => {
       it('should set the returned value from the api on the state', async () => {
         const earthquakeStore = useEarthquakeStore();
         vi.mocked(axios.get).mockResolvedValue({ data: mockEarthquakFC });
-        expect(earthquakeStore.earthquakes).toEqual([]);
+        expect(earthquakeStore.earthquakes).toEqual(null);
         await earthquakeStore.getEarthquakes();
         expect(earthquakeStore.earthquakes).toEqual(mockEarthquakFC);
       });
