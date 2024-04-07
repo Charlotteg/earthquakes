@@ -2,25 +2,40 @@
 import type { Ref } from 'vue';
 import { ref } from 'vue';
 import EarthquakeDataCard from '@/components/EarthquakeDataCard.vue';
+import { useEarthquakeStore } from '@/stores/earthquakes';
+import { storeToRefs } from 'pinia';
+import type { EarthquakeProperties } from '@/models/earthquake.model';
 const searchTerm: Ref<string> = ref('');
 const search = () => {
   console.log('searching', searchTerm.value);
 };
+const eqStore = useEarthquakeStore();
+const { earthquakes } = storeToRefs(eqStore);
 </script>
 
 <template>
   <div class="side-panel">
-    <h1>Earthquakes</h1>
-    <v-text-field
-      class="search"
-      append-inner-icon="search"
-      density="comfortable"
-      label="Search earthquake locations..."
-      variant="solo"
-      hide-details
-      v-model="searchTerm"
-      @click:append-inner="search"></v-text-field>
-    <EarthquakeDataCard />
+    <div class="side-panel__header">
+      <h1>Earthquakes</h1>
+      <v-text-field
+        class="search"
+        append-inner-icon="search"
+        density="comfortable"
+        label="Search earthquake locations..."
+        variant="solo"
+        hide-details
+        v-model="searchTerm"
+        @click:append-inner="search"></v-text-field>
+    </div>
+    <div class="earthquake-list">
+      <div
+        class="earthquake-list__item"
+        v-for="earthquake of earthquakes?.features"
+        :key="earthquake.id">
+        <EarthquakeDataCard
+          :earthquake="earthquake.properties as EarthquakeProperties" />
+      </div>
+    </div>
   </div>
 </template>
 
@@ -28,14 +43,29 @@ const search = () => {
 .side-panel {
   position: absolute;
   left: 0;
-  height: 100%;
+  height: 100vh;
   width: 400px;
   background-color: rgba(0, 0, 0, 0.6);
   z-index: 1;
-  padding: 1rem;
+  padding: 1rem 0;
+}
+
+.side-panel__header {
+  margin: 0 1rem;
 }
 
 .search {
-  margin: 1rem 0 1.5rem 0;
+  margin: 1rem 1rem 1.5rem 0;
+}
+
+.earthquake-list {
+  height: 80vh;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #bebebe rgba(0, 0, 0, 0);
+}
+
+.earthquake-list__item {
+  margin: 0 1rem;
 }
 </style>
