@@ -3,6 +3,9 @@
 // import { RouterLink, RouterView } from 'vue-router';
 import EarthquakeMap from './components/EarthquakeMap.vue';
 import '../node_modules/mapbox-gl/dist/mapbox-gl.css';
+import { useEarthquakeStore } from './stores/earthquakes';
+const eqStore = useEarthquakeStore();
+eqStore.getEarthquakes();
 </script>
 
 <template>
