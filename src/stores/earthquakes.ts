@@ -14,7 +14,7 @@ export const useEarthquakeStore = defineStore('earthquakes', () => {
   const loading: Ref<boolean> = ref(false);
   const loaded: Ref<boolean> = ref(false);
   const searchStore = useSearchStore();
-  // getters
+  // getters TODO test the getters
   const getFilteredEarthquakes = computed(() => {
     return earthquakes.value?.features.filter(feature => {
       return searchStore.searchTerm !== ''
@@ -23,6 +23,12 @@ export const useEarthquakeStore = defineStore('earthquakes', () => {
             .includes(searchStore.searchTerm.toLowerCase())
         : true;
     });
+  });
+  const getFilteredGeojson = computed(() => {
+    return {
+      ...earthquakes.value,
+      features: getFilteredEarthquakes.value ?? [],
+    };
   });
   // actions
   const loadEarthquakes = async () => {
@@ -45,6 +51,7 @@ export const useEarthquakeStore = defineStore('earthquakes', () => {
     loading,
     loaded,
     getFilteredEarthquakes,
+    getFilteredGeojson,
     loadEarthquakes,
   };
 });

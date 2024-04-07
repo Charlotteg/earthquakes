@@ -1,24 +1,36 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
 import type { Ref } from 'vue';
-import { Map } from 'mapbox-gl';
+import { Map, type GeoJSONSource } from 'mapbox-gl';
 import mapboxgl from 'mapbox-gl';
 import { useEarthquakeStore } from '@/stores/earthquakes';
 import { storeToRefs } from 'pinia';
 import type { FeatureCollection } from 'geojson';
+import { useSearchStore } from '@/stores/search';
 
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_API_KEY;
 const map: Ref<Map | null> = ref(null);
 const mapContainer: Ref<HTMLDivElement | null> = ref(null);
 const eqStore = useEarthquakeStore();
-const { earthquakes } = storeToRefs(eqStore);
+const { earthquakes, getFilteredGeojson } = storeToRefs(eqStore);
+const searchStore = useSearchStore();
 
 eqStore.$subscribe(() => addEarthquakesLayer());
+searchStore.$subscribe(() => updateSource());
+
+const updateSource = () => {
+  if (getFilteredGeojson.value) {
+    (map.value?.getSource('earthquakes') as GeoJSONSource).setData(
+      getFilteredGeojson.value as FeatureCollection
+    );
+  }
+};
 
 const addEarthquakesLayer = () => {
   if (
     map.value &&
     earthquakes.value &&
+    map.value.loaded() &&
     !map.value.getLayer('earthquakes-layer')
   ) {
     map.value?.addSource('earthquakes', {
