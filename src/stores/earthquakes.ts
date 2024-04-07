@@ -1,9 +1,9 @@
-import { ref } from 'vue';
+import { ref, computed, type Ref } from 'vue';
 import axios from 'axios';
 import { defineStore } from 'pinia';
-
-import type { Ref } from 'vue';
 import type { FeatureCollection } from 'geojson';
+import { useSearchStore } from './search';
+import type { EarthquakeProperties } from '@/models/earthquake.model';
 
 export const useEarthquakeStore = defineStore('earthquakes', () => {
   /* in this syntax refs become state properties
@@ -13,7 +13,19 @@ export const useEarthquakeStore = defineStore('earthquakes', () => {
   const earthquakes: Ref<FeatureCollection | null> = ref(null);
   const loading: Ref<boolean> = ref(false);
   const loaded: Ref<boolean> = ref(false);
-  const getEarthquakes = async () => {
+  const searchStore = useSearchStore();
+  // getters
+  const getFilteredEarthquakes = computed(() => {
+    return earthquakes.value?.features.filter(feature => {
+      return searchStore.searchTerm !== ''
+        ? (feature.properties as EarthquakeProperties).place
+            .toLowerCase()
+            .includes(searchStore.searchTerm.toLowerCase())
+        : true;
+    });
+  });
+  // actions
+  const loadEarthquakes = async () => {
     loading.value = true;
     try {
       const earthquakeRes = await axios.get(
@@ -28,5 +40,11 @@ export const useEarthquakeStore = defineStore('earthquakes', () => {
     }
   };
 
-  return { earthquakes, loading, loaded, getEarthquakes };
+  return {
+    earthquakes,
+    loading,
+    loaded,
+    getFilteredEarthquakes,
+    loadEarthquakes,
+  };
 });

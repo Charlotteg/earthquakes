@@ -16,14 +16,14 @@ describe('Earthquake store', () => {
         const earthquakeStore = useEarthquakeStore();
         vi.mocked(axios.get).mockResolvedValue({ data: mockEarthquakFC });
         expect(earthquakeStore.earthquakes).toEqual(null);
-        await earthquakeStore.getEarthquakes();
+        await earthquakeStore.loadEarthquakes();
         expect(earthquakeStore.earthquakes).toEqual(mockEarthquakFC);
       });
       it('should set loaded to true', async () => {
         const earthquakeStore = useEarthquakeStore();
         vi.mocked(axios.get).mockResolvedValue({ data: mockEarthquakFC });
         expect(earthquakeStore.loaded).toEqual(false);
-        await earthquakeStore.getEarthquakes();
+        await earthquakeStore.loadEarthquakes();
         expect(earthquakeStore.loaded).toEqual(true);
       });
     });
@@ -34,7 +34,7 @@ describe('Earthquake store', () => {
         const earthquakeStore = useEarthquakeStore();
         const error = new Error('this is an error');
         vi.mocked(axios.get).mockRejectedValue(error);
-        await earthquakeStore.getEarthquakes();
+        await earthquakeStore.loadEarthquakes();
         expect(consoleSpy).toHaveBeenCalledOnce();
         expect(consoleSpy).toHaveBeenLastCalledWith(
           'Error loading earthquake data',

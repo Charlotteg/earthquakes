@@ -13,6 +13,32 @@ const mapContainer: Ref<HTMLDivElement | null> = ref(null);
 const eqStore = useEarthquakeStore();
 const { earthquakes } = storeToRefs(eqStore);
 
+eqStore.$subscribe(() => addEarthquakesLayer());
+
+const addEarthquakesLayer = () => {
+  if (
+    map.value &&
+    earthquakes.value &&
+    !map.value.getLayer('earthquakes-layer')
+  ) {
+    map.value?.addSource('earthquakes', {
+      type: 'geojson',
+      data: earthquakes.value as FeatureCollection,
+    });
+    map.value?.addLayer({
+      id: 'earthquakes-layer',
+      type: 'circle',
+      source: 'earthquakes',
+      paint: {
+        'circle-radius': 4,
+        'circle-stroke-width': 2,
+        'circle-color': 'red',
+        'circle-stroke-color': 'white',
+      },
+    });
+  }
+};
+
 onMounted(() => {
   map.value = new mapboxgl.Map({
     container: mapContainer.value ?? '',
@@ -27,24 +53,7 @@ onMounted(() => {
   });
 
   map.value.on('load', () => {
-    // TODO subscribe to state here?
-    if (earthquakes) {
-      map.value?.addSource('earthquakes', {
-        type: 'geojson',
-        data: earthquakes.value as FeatureCollection,
-      });
-      map.value?.addLayer({
-        id: 'earthquakes-layer',
-        type: 'circle',
-        source: 'earthquakes',
-        paint: {
-          'circle-radius': 4,
-          'circle-stroke-width': 2,
-          'circle-color': 'red',
-          'circle-stroke-color': 'white',
-        },
-      });
-    }
+    addEarthquakesLayer();
   });
 });
 
