@@ -27,6 +27,7 @@ onMounted(() => {
   });
 
   map.value.on('load', () => {
+    // TODO subscribe to state here?
     if (earthquakes) {
       map.value?.addSource('earthquakes', {
         type: 'geojson',
