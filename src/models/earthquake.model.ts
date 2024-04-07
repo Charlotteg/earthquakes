@@ -11,7 +11,7 @@ export interface EarthquakeProperties {
   mmi: number;
   alert: string;
   status: string;
-  tsunami: boolean;
+  tsunami: 0 | 1;
   sig: number;
   net: string;
   code: string;
@@ -47,6 +47,6 @@ export interface EarthquakeFeatureCollection {
     count: number;
     status: number;
   };
-  bbox: number[];
+  bbox?: number[];
   features: EarthquakeFeature[];
 }
