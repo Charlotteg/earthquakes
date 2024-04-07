@@ -1,15 +1,16 @@
 import { ref } from 'vue';
-import type { Ref } from 'vue';
-import { defineStore } from 'pinia';
 import axios from 'axios';
-import type { EarthquakeFeature } from '@/models/earthquake.model';
+import { defineStore } from 'pinia';
+
+import type { Ref } from 'vue';
+import type { FeatureCollection } from 'geojson';
 
 export const useEarthquakeStore = defineStore('earthquakes', () => {
-  /* in this syntac refs become state properties
+  /* in this syntax refs become state properties
     computeds become getters
     functions become actions
   */
-  const earthquakes: Ref<EarthquakeFeature[]> = ref([]);
+  const earthquakes: Ref<FeatureCollection | null> = ref(null);
   const loading: Ref<boolean> = ref(false);
   const loaded: Ref<boolean> = ref(false);
   const getEarthquakes = async () => {

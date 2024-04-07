@@ -3,9 +3,15 @@ import { ref, onMounted, onUnmounted } from 'vue';
 import type { Ref } from 'vue';
 import { Map } from 'mapbox-gl';
 import mapboxgl from 'mapbox-gl';
+import { useEarthquakeStore } from '@/stores/earthquakes';
+import { storeToRefs } from 'pinia';
+import type { FeatureCollection } from 'geojson';
+
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_API_KEY;
 const map: Ref<Map | null> = ref(null);
 const mapContainer: Ref<HTMLDivElement | null> = ref(null);
+const eqStore = useEarthquakeStore();
+const { earthquakes } = storeToRefs(eqStore);
 
 onMounted(() => {
   map.value = new mapboxgl.Map({
@@ -16,8 +22,28 @@ onMounted(() => {
     projection: { name: 'globe' },
   });
 
-  map.value.on('load', () => {
+  map.value.on('style.load', () => {
     map.value?.setFog({});
+  });
+
+  map.value.on('load', () => {
+    if (earthquakes) {
+      map.value?.addSource('earthquakes', {
+        type: 'geojson',
+        data: earthquakes.value as FeatureCollection,
+      });
+      map.value?.addLayer({
+        id: 'earthquakes-layer',
+        type: 'circle',
+        source: 'earthquakes',
+        paint: {
+          'circle-radius': 4,
+          'circle-stroke-width': 2,
+          'circle-color': 'red',
+          'circle-stroke-color': 'white',
+        },
+      });
+    }
   });
 });
 
