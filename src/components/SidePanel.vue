@@ -5,7 +5,7 @@ import { storeToRefs } from 'pinia';
 import type { EarthquakeProperties } from '@/models/earthquake.model';
 import { useSearchStore } from '@/stores/search';
 const eqStore = useEarthquakeStore();
-const { getFilteredGeojson, selectedId } = storeToRefs(eqStore);
+const { getFilteredGeojson, selectedId, hoverId } = storeToRefs(eqStore);
 const searchStore = useSearchStore();
 const { searchTerm } = storeToRefs(searchStore);
 </script>
@@ -31,7 +31,8 @@ const { searchTerm } = storeToRefs(searchStore);
         <EarthquakeDataCard
           :id="`${earthquake.id}` ?? ''"
           :earthquake="earthquake.properties as EarthquakeProperties"
-          @selected="id => (selectedId = id)" />
+          @selected="id => (selectedId = id)"
+          @hover="id => (hoverId = id)" />
       </div>
     </div>
   </div>

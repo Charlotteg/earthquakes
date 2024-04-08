@@ -18,8 +18,17 @@ const formatDate = (time: number) => {
 </script>
 
 <template>
-  <v-card class="eq-card" hover>
-    <div class="eq-card__circle"></div>
+  <v-card
+    class="eq-card"
+    hover
+    @mouseenter="$emit('hover', earthquake.code)"
+    @mouseleave="$emit('hover', null)">
+    <div
+      class="eq-card__circle"
+      :style="{
+        width: 4 * earthquake.mag + 'px',
+        height: 4 * earthquake.mag + 'px',
+      }"></div>
     <div>
       <v-card-title class="eq-card__title"
         >{{ earthquake.place.split(',')[0] }}
@@ -70,6 +79,7 @@ const formatDate = (time: number) => {
   height: 24px;
   background-color: #ffd600;
   margin-left: 1rem;
+  justify-self: center;
 }
 
 .eq-card__title {
