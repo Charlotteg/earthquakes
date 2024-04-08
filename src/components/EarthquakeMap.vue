@@ -46,15 +46,34 @@ const addEarthquakesLayer = () => {
       type: 'geojson',
       data: earthquakes.value as FeatureCollection,
     });
+    // add multiple layers to create glowy effect
     map.value?.addLayer({
-      id: 'earthquakes-layer',
+      id: 'earthquakes-layer-1',
       type: 'circle',
       source: 'earthquakes',
       paint: {
-        'circle-radius': 4,
-        'circle-stroke-width': 2,
-        'circle-color': 'red',
-        'circle-stroke-color': 'white',
+        'circle-radius': ['*', 5, ['get', 'mag']],
+        'circle-blur': 2,
+        'circle-color': '#c73a30',
+      },
+    });
+    map.value?.addLayer({
+      id: 'earthquakes-layer-2',
+      type: 'circle',
+      source: 'earthquakes',
+      paint: {
+        'circle-radius': ['*', 3, ['get', 'mag']],
+        'circle-color': '#f53e31',
+        'circle-blur': 2,
+      },
+    });
+    map.value?.addLayer({
+      id: 'earthquakes-layer-3',
+      type: 'circle',
+      source: 'earthquakes',
+      paint: {
+        'circle-radius': ['*', 0.7, ['get', 'mag']],
+        'circle-color': '#f5ad31',
       },
     });
   }
@@ -63,14 +82,18 @@ const addEarthquakesLayer = () => {
 onMounted(() => {
   map.value = new mapboxgl.Map({
     container: mapContainer.value ?? '',
-    style: 'mapbox://styles/mapbox/streets-v12', // Replace with your preferred map style
+    style: 'mapbox://styles/mapbox/navigation-night-v1',
     center: [-71.224518, 42.213995],
     zoom: 1.5,
     projection: { name: 'globe' },
   });
 
   map.value.on('style.load', () => {
-    map.value?.setFog({});
+    map.value?.setFog({
+      color: '#82221b',
+      'horizon-blend': 0.1,
+      'space-color': '#000000',
+    });
   });
 
   map.value.on('load', () => {
