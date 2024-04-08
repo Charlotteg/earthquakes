@@ -1,15 +1,7 @@
-import type { EarthquakeFeatureCollection } from '@/models/earthquake.model';
+import type { FeatureCollection } from 'geojson';
 
-export const mockEarthquakFC: EarthquakeFeatureCollection = {
+export const mockEarthquakeFC: FeatureCollection = {
   type: 'FeatureCollection',
-  metadata: {
-    generated: 1712491740000,
-    url: 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_month.geojson',
-    title: 'USGS Significant Earthquakes, Past Month',
-    status: 200,
-    api: '1.10.3',
-    count: 10,
-  },
   features: [
     {
       type: 'Feature',

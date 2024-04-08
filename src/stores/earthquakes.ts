@@ -14,8 +14,8 @@ export const useEarthquakeStore = defineStore('earthquakes', () => {
   const loading: Ref<boolean> = ref(false);
   const loaded: Ref<boolean> = ref(false);
   const searchStore = useSearchStore();
-  // getters TODO test the getters
-  const getFilteredEarthquakes = computed(() => {
+
+  const filterFeatures = () => {
     return earthquakes.value?.features.filter(feature => {
       return searchStore.searchTerm !== ''
         ? (feature.properties as EarthquakeProperties).place
@@ -23,11 +23,12 @@ export const useEarthquakeStore = defineStore('earthquakes', () => {
             .includes(searchStore.searchTerm.toLowerCase())
         : true;
     });
-  });
+  };
+  // getters
   const getFilteredGeojson = computed(() => {
     return {
       ...earthquakes.value,
-      features: getFilteredEarthquakes.value ?? [],
+      features: filterFeatures() ?? [],
     };
   });
   // actions
@@ -50,7 +51,7 @@ export const useEarthquakeStore = defineStore('earthquakes', () => {
     earthquakes,
     loading,
     loaded,
-    getFilteredEarthquakes,
+    filterFeatures,
     getFilteredGeojson,
     loadEarthquakes,
   };

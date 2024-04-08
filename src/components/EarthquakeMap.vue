@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted, watch } from 'vue';
 import type { Ref } from 'vue';
 import { Map, type GeoJSONSource } from 'mapbox-gl';
 import mapboxgl from 'mapbox-gl';
@@ -12,10 +12,13 @@ mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_API_KEY;
 const map: Ref<Map | null> = ref(null);
 const mapContainer: Ref<HTMLDivElement | null> = ref(null);
 const eqStore = useEarthquakeStore();
-const { earthquakes, getFilteredGeojson } = storeToRefs(eqStore);
+const { earthquakes, getFilteredGeojson, loaded } = storeToRefs(eqStore);
 const searchStore = useSearchStore();
 
-eqStore.$subscribe(() => addEarthquakesLayer());
+// different ways of responding to changes in the store
+watch(loaded, () => {
+  addEarthquakesLayer();
+});
 searchStore.$subscribe(() => updateSource());
 
 const updateSource = () => {

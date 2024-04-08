@@ -5,7 +5,7 @@ import { storeToRefs } from 'pinia';
 import type { EarthquakeProperties } from '@/models/earthquake.model';
 import { useSearchStore } from '@/stores/search';
 const eqStore = useEarthquakeStore();
-const { getFilteredEarthquakes } = storeToRefs(eqStore);
+const { getFilteredGeojson } = storeToRefs(eqStore);
 const searchStore = useSearchStore();
 const { searchTerm } = storeToRefs(searchStore);
 </script>
@@ -26,7 +26,7 @@ const { searchTerm } = storeToRefs(searchStore);
     <div class="earthquake-list">
       <div
         class="earthquake-list__item"
-        v-for="earthquake of getFilteredEarthquakes"
+        v-for="earthquake of getFilteredGeojson.features"
         :key="earthquake.id">
         <EarthquakeDataCard
           :earthquake="earthquake.properties as EarthquakeProperties" />
