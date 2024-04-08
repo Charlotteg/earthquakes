@@ -92,6 +92,7 @@ const addEarthquakesLayer = () => {
       id: 'highlight-layer-1',
       type: 'circle',
       source: 'earthquakes',
+      filter: ['==', '', ['get', 'code']],
       paint: {
         'circle-radius': ['*', 5, ['get', 'mag']],
         'circle-blur': 2,
@@ -102,6 +103,7 @@ const addEarthquakesLayer = () => {
       id: 'highlight-layer-2',
       type: 'circle',
       source: 'earthquakes',
+      filter: ['==', '', ['get', 'code']],
       paint: {
         'circle-radius': ['*', 3, ['get', 'mag']],
         'circle-color': 'blue',
