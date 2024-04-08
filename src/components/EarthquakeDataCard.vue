@@ -18,7 +18,11 @@ const formatDate = (time: number) => {
 </script>
 
 <template>
-  <v-card class="eq-card" hover>
+  <v-card
+    class="eq-card"
+    hover
+    @mouseenter="$emit('hover', earthquake.code)"
+    @mouseleave="$emit('hover', null)">
     <div class="eq-card__circle"></div>
     <div>
       <v-card-title class="eq-card__title"

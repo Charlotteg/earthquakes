@@ -12,7 +12,7 @@ mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_API_KEY;
 const map: Ref<Map | null> = ref(null);
 const mapContainer: Ref<HTMLDivElement | null> = ref(null);
 const eqStore = useEarthquakeStore();
-const { earthquakes, getFilteredGeojson, loaded, getSelectedCoords } =
+const { earthquakes, getFilteredGeojson, loaded, getSelectedCoords, hoverId } =
   storeToRefs(eqStore);
 const searchStore = useSearchStore();
 
@@ -25,13 +25,23 @@ watch(getSelectedCoords, coords => {
     map.value.flyTo({ center: coords, zoom: 5 });
   }
 });
-searchStore.$subscribe(() => updateSource());
 
-const updateSource = () => {
+watch(hoverId, () => {
+  if (map.value) {
+    const filter = ['==', hoverId.value, ['get', 'code']];
+    map.value.setFilter('highlight-layer', filter);
+    map.value.setFilter('highlight-layer-1', filter);
+    map.value.setFilter('highlight-layer-2', filter);
+  }
+});
+
+searchStore.$subscribe(() =>
+  updateSource('earthquakes', getFilteredGeojson.value as FeatureCollection)
+);
+
+const updateSource = (identifier: string, data: FeatureCollection) => {
   if (getFilteredGeojson.value) {
-    (map.value?.getSource('earthquakes') as GeoJSONSource).setData(
-      getFilteredGeojson.value as FeatureCollection
-    );
+    (map.value?.getSource(identifier) as GeoJSONSource)?.setData(data);
   }
 };
 
@@ -73,6 +83,38 @@ const addEarthquakesLayer = () => {
       source: 'earthquakes',
       paint: {
         'circle-radius': ['*', 0.7, ['get', 'mag']],
+        'circle-color': '#f5ad31',
+      },
+    });
+
+    // add highlight layers
+    map.value?.addLayer({
+      id: 'highlight-layer-1',
+      type: 'circle',
+      source: 'earthquakes',
+      paint: {
+        'circle-radius': ['*', 5, ['get', 'mag']],
+        'circle-blur': 2,
+        'circle-color': 'blue',
+      },
+    });
+    map.value?.addLayer({
+      id: 'highlight-layer-2',
+      type: 'circle',
+      source: 'earthquakes',
+      paint: {
+        'circle-radius': ['*', 3, ['get', 'mag']],
+        'circle-color': 'blue',
+        'circle-blur': 2,
+      },
+    });
+    map.value?.addLayer({
+      id: 'highlight-layer',
+      type: 'circle',
+      source: 'earthquakes',
+      filter: ['==', '', ['get', 'code']],
+      paint: {
+        'circle-radius': ['*', 1.2, ['get', 'mag']],
         'circle-color': '#f5ad31',
       },
     });

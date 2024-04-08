@@ -14,10 +14,12 @@ export const useEarthquakeStore = defineStore('earthquakes', () => {
   const loading: Ref<boolean> = ref(false);
   const loaded: Ref<boolean> = ref(false);
   const selectedId: Ref<string | null> = ref(null);
+  const hoverId: Ref<string | null> = ref(null);
 
   // pinia allows for multiple stores to be used together
   const searchStore = useSearchStore();
 
+  // util function
   const filterFeatures = () => {
     return earthquakes.value?.features.filter(feature => {
       return searchStore.searchTerm !== ''
@@ -67,6 +69,7 @@ export const useEarthquakeStore = defineStore('earthquakes', () => {
     loading,
     loaded,
     selectedId,
+    hoverId,
     getFilteredGeojson,
     getSelectedCoords,
     filterFeatures,
