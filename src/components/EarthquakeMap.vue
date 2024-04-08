@@ -1,17 +1,58 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted, watch } from 'vue';
 import type { Ref } from 'vue';
-import { Map } from 'mapbox-gl';
+import { Map, type GeoJSONSource } from 'mapbox-gl';
 import mapboxgl from 'mapbox-gl';
 import { useEarthquakeStore } from '@/stores/earthquakes';
 import { storeToRefs } from 'pinia';
 import type { FeatureCollection } from 'geojson';
+import { useSearchStore } from '@/stores/search';
 
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_API_KEY;
 const map: Ref<Map | null> = ref(null);
 const mapContainer: Ref<HTMLDivElement | null> = ref(null);
 const eqStore = useEarthquakeStore();
-const { earthquakes } = storeToRefs(eqStore);
+const { earthquakes, getFilteredGeojson, loaded } = storeToRefs(eqStore);
+const searchStore = useSearchStore();
+
+// different ways of responding to changes in the store
+watch(loaded, () => {
+  addEarthquakesLayer();
+});
+searchStore.$subscribe(() => updateSource());
+
+const updateSource = () => {
+  if (getFilteredGeojson.value) {
+    (map.value?.getSource('earthquakes') as GeoJSONSource).setData(
+      getFilteredGeojson.value as FeatureCollection
+    );
+  }
+};
+
+const addEarthquakesLayer = () => {
+  if (
+    map.value &&
+    earthquakes.value &&
+    map.value.loaded() &&
+    !map.value.getLayer('earthquakes-layer')
+  ) {
+    map.value?.addSource('earthquakes', {
+      type: 'geojson',
+      data: earthquakes.value as FeatureCollection,
+    });
+    map.value?.addLayer({
+      id: 'earthquakes-layer',
+      type: 'circle',
+      source: 'earthquakes',
+      paint: {
+        'circle-radius': 4,
+        'circle-stroke-width': 2,
+        'circle-color': 'red',
+        'circle-stroke-color': 'white',
+      },
+    });
+  }
+};
 
 onMounted(() => {
   map.value = new mapboxgl.Map({
@@ -27,24 +68,7 @@ onMounted(() => {
   });
 
   map.value.on('load', () => {
-    // TODO subscribe to state here?
-    if (earthquakes) {
-      map.value?.addSource('earthquakes', {
-        type: 'geojson',
-        data: earthquakes.value as FeatureCollection,
-      });
-      map.value?.addLayer({
-        id: 'earthquakes-layer',
-        type: 'circle',
-        source: 'earthquakes',
-        paint: {
-          'circle-radius': 4,
-          'circle-stroke-width': 2,
-          'circle-color': 'red',
-          'circle-stroke-color': 'white',
-        },
-      });
-    }
+    addEarthquakesLayer();
   });
 });
 

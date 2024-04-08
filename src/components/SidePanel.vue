@@ -1,16 +1,13 @@
 <script setup lang="ts">
-import type { Ref } from 'vue';
-import { ref } from 'vue';
 import EarthquakeDataCard from '@/components/EarthquakeDataCard.vue';
 import { useEarthquakeStore } from '@/stores/earthquakes';
 import { storeToRefs } from 'pinia';
 import type { EarthquakeProperties } from '@/models/earthquake.model';
-const searchTerm: Ref<string> = ref('');
-const search = () => {
-  console.log('searching', searchTerm.value);
-};
+import { useSearchStore } from '@/stores/search';
 const eqStore = useEarthquakeStore();
-const { earthquakes } = storeToRefs(eqStore);
+const { getFilteredGeojson } = storeToRefs(eqStore);
+const searchStore = useSearchStore();
+const { searchTerm } = storeToRefs(searchStore);
 </script>
 
 <template>
@@ -24,13 +21,12 @@ const { earthquakes } = storeToRefs(eqStore);
         label="Search earthquake locations..."
         variant="solo"
         hide-details
-        v-model="searchTerm"
-        @click:append-inner="search"></v-text-field>
+        v-model="searchTerm"></v-text-field>
     </div>
     <div class="earthquake-list">
       <div
         class="earthquake-list__item"
-        v-for="earthquake of earthquakes?.features"
+        v-for="earthquake of getFilteredGeojson.features"
         :key="earthquake.id">
         <EarthquakeDataCard
           :earthquake="earthquake.properties as EarthquakeProperties" />
