@@ -90,14 +90,16 @@ After creating the repository, I created a github action to run some CI processe
 
 Normally I use Jira for task management but I tried out github issues for this one. Before getting to work I created a backlog of foreseeable tasks to fully implement the application.
 
-Vue has 2 ways of writing code, the options api and the composition api. I chose to use the composition api as it seemed more familiar to me coming from Angular & React. One challenge throughout development was translating tutorials and example code from options api into the composition api.
+Vue has two ways of writing code, the options api and the composition api. I chose to use the composition api as it seemed more familiar to me coming from Angular & React. One challenge throughout development was translating tutorials and example code from options api into the composition api.
 
 ### Building the app
 
-The biggest challenging building the app was learning a whole new framework, state library and testing library in a very short time (in fact the only part of the tech stack I have worked with before is mapbox and playwright a little). I spent a lot of time reading docs, watching videos and looking for examples to make sure I got the implemetations right (and it's probably a little shy of best practice as this is my first go). Across the app I took the approach of trying to find different ways to do things so I could assess the differences between approaches.
+The biggest challenge building the app was learning a whole new framework, state library and testing library in a very short time (in fact the only part of the tech stack I have worked with before is mapbox and playwright a little). I spent a lot of time reading docs, watching videos and looking for examples to make sure I got the implemetations right (and it's probably more than a little shy of best practice as this is my first go). Across the app I took the approach of trying to find different ways to do things so I could assess the differences between approaches.
 
 I would like the app to be more comprehensively tested but was up against it with time so compromised testing for functionality implementation, however made sure to include some tests (specifically on the earthquakes store) to provide an indication of what unit testing in this application might look like.
 
 ### Developing further
 
 When switching out the significant events endpoint for one that has all the events in the past month, there is a significant performance lapse which indicates the code could be optimised. I would like to ensure that the app is scalable and can accommodate larger datasets.
+
+There are also many more pieces of functionality that would make the app more useable, such as a reset map button.
