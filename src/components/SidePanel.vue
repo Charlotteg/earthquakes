@@ -5,7 +5,7 @@ import { storeToRefs } from 'pinia';
 import type { EarthquakeProperties } from '@/models/earthquake.model';
 import { useSearchStore } from '@/stores/search';
 const eqStore = useEarthquakeStore();
-const { getFilteredGeojson } = storeToRefs(eqStore);
+const { getFilteredGeojson, selectedId } = storeToRefs(eqStore);
 const searchStore = useSearchStore();
 const { searchTerm } = storeToRefs(searchStore);
 </script>
@@ -29,7 +29,9 @@ const { searchTerm } = storeToRefs(searchStore);
         v-for="earthquake of getFilteredGeojson.features"
         :key="earthquake.id">
         <EarthquakeDataCard
-          :earthquake="earthquake.properties as EarthquakeProperties" />
+          :id="`${earthquake.id}` ?? ''"
+          :earthquake="earthquake.properties as EarthquakeProperties"
+          @selected="id => (selectedId = id)" />
       </div>
     </div>
   </div>
