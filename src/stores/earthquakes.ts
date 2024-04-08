@@ -13,6 +13,9 @@ export const useEarthquakeStore = defineStore('earthquakes', () => {
   const earthquakes: Ref<FeatureCollection | null> = ref(null);
   const loading: Ref<boolean> = ref(false);
   const loaded: Ref<boolean> = ref(false);
+  const selectedId: Ref<string | null> = ref(null);
+
+  // pinia allows for multiple stores to be used together
   const searchStore = useSearchStore();
 
   const filterFeatures = () => {
@@ -30,6 +33,18 @@ export const useEarthquakeStore = defineStore('earthquakes', () => {
       ...earthquakes.value,
       features: filterFeatures() ?? [],
     };
+  });
+  const getSelectedCoords = computed(() => {
+    const selectedFeat = earthquakes.value?.features.find(
+      feature => feature.id === selectedId.value
+    );
+    if (selectedFeat?.geometry.type === 'Point') {
+      const lat = selectedFeat?.geometry.coordinates[1];
+      const lng = selectedFeat?.geometry.coordinates[0];
+      return { lng, lat };
+    } else {
+      return null;
+    }
   });
   // actions
   const loadEarthquakes = async () => {
@@ -51,8 +66,10 @@ export const useEarthquakeStore = defineStore('earthquakes', () => {
     earthquakes,
     loading,
     loaded,
-    filterFeatures,
+    selectedId,
     getFilteredGeojson,
+    getSelectedCoords,
+    filterFeatures,
     loadEarthquakes,
   };
 });

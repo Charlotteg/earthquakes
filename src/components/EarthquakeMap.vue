@@ -12,12 +12,18 @@ mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_API_KEY;
 const map: Ref<Map | null> = ref(null);
 const mapContainer: Ref<HTMLDivElement | null> = ref(null);
 const eqStore = useEarthquakeStore();
-const { earthquakes, getFilteredGeojson, loaded } = storeToRefs(eqStore);
+const { earthquakes, getFilteredGeojson, loaded, getSelectedCoords } =
+  storeToRefs(eqStore);
 const searchStore = useSearchStore();
 
 // different ways of responding to changes in the store
 watch(loaded, () => {
   addEarthquakesLayer();
+});
+watch(getSelectedCoords, coords => {
+  if (coords && map.value) {
+    map.value.flyTo({ center: coords, zoom: 5 });
+  }
 });
 searchStore.$subscribe(() => updateSource());
 

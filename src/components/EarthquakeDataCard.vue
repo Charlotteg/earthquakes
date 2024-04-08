@@ -4,6 +4,7 @@ import { defineProps } from 'vue';
 
 defineProps<{
   earthquake: EarthquakeProperties;
+  id: string;
 }>();
 
 const formatDate = (time: number) => {
@@ -31,7 +32,7 @@ const formatDate = (time: number) => {
         <span>{{ formatDate(earthquake.time) }}</span>
       </v-card-text>
     </div>
-    <v-btn class="eq-card__button">
+    <v-btn @click="$emit('selected', id)" class="eq-card__button">
       View
       <template v-slot:append>
         <v-icon>arrow_forward</v-icon>
